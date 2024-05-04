@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ServiceProviderService } from './service-provider.service';
-import { ServiceProviderResolver } from './service-provider.resolver';
+import { ProfessionalService } from './service-provider.service';
+import { ProfessionalResolver } from './service-provider.resolver';
 
 @Module({
-  providers: [ServiceProviderResolver, ServiceProviderService],
+  providers: [ProfessionalResolver, ProfessionalService],
 })
-export class ServiceProviderModule {}
+export class ProfessionalModule {}

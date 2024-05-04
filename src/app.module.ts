@@ -7,7 +7,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { GraphqlModule } from './graphql/graphql.module';
 import { ServiceModule } from './service/service.module';
-import { ServiceProviderModule } from './service-provider/service-provider.module';
+import { ProfessionalModule } from './service-provider/service-provider.module';
 import { BookingModule } from './booking/booking.module';
 
 @Module({
@@ -30,7 +30,7 @@ import { BookingModule } from './booking/booking.module';
     AuthModule,
     GraphqlModule,
     ServiceModule,
-    ServiceProviderModule,
+    ProfessionalModule,
     BookingModule,
   ],
 })

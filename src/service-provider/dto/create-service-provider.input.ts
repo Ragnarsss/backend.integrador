@@ -1,1 +1,1 @@
-export class CreateServiceProviderInput {}
+export class CreateProfessionalInput {}

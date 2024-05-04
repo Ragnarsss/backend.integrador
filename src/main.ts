@@ -1,6 +1,8 @@
+import { LoggerMiddleware } from './common/logger.middleware';
+
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +23,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(3000);
+
+  app.use('/graphql', LoggerMiddleware);
   console.log('Server is listening');
 }
 bootstrap();

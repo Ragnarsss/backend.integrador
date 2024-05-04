@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBookingInput } from './dto/create-booking.input';
-import { UpdateBookingInput } from './dto/update-booking.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookingService {
-  create(createBookingInput: CreateBookingInput) {
+  create(createBookingInput: Prisma.BookingCreateInput) {
     return 'This action adds a new booking';
   }
 
@@ -16,7 +15,7 @@ export class BookingService {
     return `This action returns a #${id} booking`;
   }
 
-  update(id: number, updateBookingInput: UpdateBookingInput) {
+  update(id: number, updateBookingInput: Prisma.BookingUpdateInput) {
     return `This action updates a #${id} booking`;
   }
 

@@ -1,24 +1,28 @@
-type ServiceProvider {
+type Professional {
   # Example field (placeholder)
   exampleField: Int
 }
 
-input CreateServiceProviderInput {
+input CreateProfessionalInput {
   # Example field (placeholder)
   exampleField: Int
 }
 
-input UpdateServiceProviderInput {
+input UpdateProfessionalInput {
   id: Int!
 }
 
 type Query {
-  serviceProvider: [ServiceProvider]!
-  serviceProvider(id: Int!): ServiceProvider
+  Professional: [Professional]!
+  Professional(id: Int!): Professional
 }
 
 type Mutation {
-  createServiceProvider(createServiceProviderInput: CreateServiceProviderInput!): ServiceProvider!
-  updateServiceProvider(updateServiceProviderInput: UpdateServiceProviderInput!): ServiceProvider!
-  removeServiceProvider(id: Int!): ServiceProvider
+  createProfessional(
+    createProfessionalInput: CreateProfessionalInput!
+  ): Professional!
+  updateProfessional(
+    updateProfessionalInput: UpdateProfessionalInput!
+  ): Professional!
+  removeProfessional(id: Int!): Professional
 }

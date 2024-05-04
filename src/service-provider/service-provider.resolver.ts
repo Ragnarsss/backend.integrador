@@ -1,34 +1,43 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { ServiceProviderService } from './service-provider.service';
-import { CreateServiceProviderInput } from './dto/create-service-provider.input';
-import { UpdateServiceProviderInput } from './dto/update-service-provider.input';
+import { ProfessionalService } from './service-provider.service';
+import { CreateProfessionalInput } from './dto/create-service-provider.input';
+import { UpdateProfessionalInput } from './dto/update-service-provider.input';
 
-@Resolver('ServiceProvider')
-export class ServiceProviderResolver {
-  constructor(private readonly serviceProviderService: ServiceProviderService) {}
+@Resolver('Professional')
+export class ProfessionalResolver {
+  constructor(private readonly ProfessionalService: ProfessionalService) {}
 
-  @Mutation('createServiceProvider')
-  create(@Args('createServiceProviderInput') createServiceProviderInput: CreateServiceProviderInput) {
-    return this.serviceProviderService.create(createServiceProviderInput);
+  @Mutation('createProfessional')
+  create(
+    @Args('createProfessionalInput')
+    createProfessionalInput: CreateProfessionalInput,
+  ) {
+    return this.ProfessionalService.create(createProfessionalInput);
   }
 
-  @Query('serviceProvider')
+  @Query('Professional')
   findAll() {
-    return this.serviceProviderService.findAll();
+    return this.ProfessionalService.findAll();
   }
 
-  @Query('serviceProvider')
+  @Query('Professional')
   findOne(@Args('id') id: number) {
-    return this.serviceProviderService.findOne(id);
+    return this.ProfessionalService.findOne(id);
   }
 
-  @Mutation('updateServiceProvider')
-  update(@Args('updateServiceProviderInput') updateServiceProviderInput: UpdateServiceProviderInput) {
-    return this.serviceProviderService.update(updateServiceProviderInput.id, updateServiceProviderInput);
+  @Mutation('updateProfessional')
+  update(
+    @Args('updateProfessionalInput')
+    updateProfessionalInput: UpdateProfessionalInput,
+  ) {
+    return this.ProfessionalService.update(
+      updateProfessionalInput.id,
+      updateProfessionalInput,
+    );
   }
 
-  @Mutation('removeServiceProvider')
+  @Mutation('removeProfessional')
   remove(@Args('id') id: number) {
-    return this.serviceProviderService.remove(id);
+    return this.ProfessionalService.remove(id);
   }
 }

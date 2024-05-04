@@ -1,1 +1,1 @@
-export class ServiceProvider {}
+export class Professional {}
