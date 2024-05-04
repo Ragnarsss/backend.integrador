@@ -1,0 +1,24 @@
+type ServiceProvider {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input CreateServiceProviderInput {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input UpdateServiceProviderInput {
+  id: Int!
+}
+
+type Query {
+  serviceProvider: [ServiceProvider]!
+  serviceProvider(id: Int!): ServiceProvider
+}
+
+type Mutation {
+  createServiceProvider(createServiceProviderInput: CreateServiceProviderInput!): ServiceProvider!
+  updateServiceProvider(updateServiceProviderInput: UpdateServiceProviderInput!): ServiceProvider!
+  removeServiceProvider(id: Int!): ServiceProvider
+}

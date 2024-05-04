@@ -5,6 +5,10 @@ import * as Joi from 'joi';
 import config from './config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { GraphqlModule } from './graphql/graphql.module';
+import { ServiceModule } from './service/service.module';
+import { ServiceProviderModule } from './service-provider/service-provider.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -18,14 +22,16 @@ import { AuthModule } from './auth/auth.module';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_HOST: Joi.string().required(),
-        JWT_LOGIN_SECRET: Joi.string().required(),
-        JWT_LOGIN_EXPIRES_IN: Joi.number().required(),
-        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
-        JWT_REFRESH_TOKEN_EXPIRES_IN: Joi.number().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
     UserModule,
     AuthModule,
+    GraphqlModule,
+    ServiceModule,
+    ServiceProviderModule,
+    BookingModule,
   ],
 })
 export class AppModule {}

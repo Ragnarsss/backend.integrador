@@ -10,12 +10,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async login(authData: AuthDto) {
@@ -34,27 +36,15 @@ export class AuthService {
       if (!isPasswordMatch)
         throw new UnauthorizedException('Invalid credentials');
 
-      const accessToken = await this.jwtService.signAsync(
-        {
-          email: user.email,
-          sub: user.id,
-        },
-        {
-          secret: process.env.JWT_LOGIN_SECRET,
-          expiresIn: process.env.JWT_LOGIN_EXPIRES_IN,
-        },
-      );
+      const accessToken = await this.jwtService.signAsync({
+        email: user.email,
+        sub: user.id,
+      });
 
-      const refreshToken = await this.jwtService.signAsync(
-        {
-          email: user.email,
-          sub: user.id,
-        },
-        {
-          secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
-        },
-      );
+      const refreshToken = await this.jwtService.signAsync({
+        email: user.email,
+        sub: user.id,
+      });
 
       const response = {
         statusCode: 200,
@@ -79,12 +69,14 @@ export class AuthService {
 
   async refreshToken(email: string, refreshToken: string) {
     try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-      });
+      console.log('SECRET', this.configService.get('JWT_SECRET'));
+      const payload = await this.jwtService.verify(refreshToken);
+      console.log(`payload, ${payload}`);
 
       // Check if the email in the payload matches the provided email
       if (payload.email !== email) {
+        console.log(`payload email, ${payload.email}, email, ${email}`);
+
         throw new UnauthorizedException(
           'Email does not match the one in the refresh token',
         );
@@ -103,16 +95,10 @@ export class AuthService {
       });
 
       return {
-        access_token: this.jwtService.sign(
-          {
-            username: user.userName,
-            sub: user.id,
-          },
-          {
-            secret: process.env.JWT_LOGIN_SECRET,
-            expiresIn: process.env.JWT_LOGIN_EXPIRES_IN,
-          },
-        ),
+        access_token: this.jwtService.sign({
+          username: user.userName,
+          sub: user.id,
+        }),
         refresh_token: newRefreshToken,
       };
     } catch (e) {

@@ -14,13 +14,13 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(cuid())
-  email             String          @unique
+  id                String           @id @default(cuid())
+  email             String           @unique
   userName          String
-  password          String          
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  serviceProviderId String?         @unique
+  password          String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  serviceProviderId String?          @unique
   serviceProvider   ServiceProvider? @relation(fields: [serviceProviderId], references: [id])
 }
 
@@ -51,20 +51,20 @@ model Service {
 }
 
 model Booking {
-  id             String          @id @default(cuid())
-  date           DateTime
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  serviceId      String          @unique
-  isActive       Boolean
-  service        Service         @relation(fields: [serviceId], references: [id])
-  providerId     String          @unique
-  provider       ServiceProvider @relation(fields: [providerId], references: [id])
-  providerReview ProviderReview?
-  serviceReview  ServiceReview?
+  id                    String                 @id @default(cuid())
+  date                  DateTime
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  serviceId             String                 @unique
+  isActive              Boolean
+  service               Service                @relation(fields: [serviceId], references: [id])
+  serviceProviderId     String                 @unique
+  serviceProvider       ServiceProvider        @relation(fields: [serviceProviderId], references: [id])
+  serviceProviderReview ServiceProviderReview?
+  serviceReview         ServiceReview?
 }
 
-model ProviderReview {
+model ServiceProviderReview {
   id        String   @id @default(cuid())
   rating    Int
   comment   String
