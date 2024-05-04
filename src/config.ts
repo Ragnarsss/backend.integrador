@@ -10,9 +10,13 @@ export default registerAs('config', () => {
       host: process.env.POSTGRES_HOST,
     },
     jwt: {
-      secret: process.env.JWT_SECRET,
-      expiresIn: process.env.JWT_EXPIRES_IN,
-      salt: process.env.JWT_SALT,
+      loginSecret: process.env.JWT_LOGIN_SECRET,
+      loginTokenExpiresIn: parseInt(process.env.JWT_LOGIN_EXPIRES_IN, 10),
+      refreshTokenExpiresIn: parseInt(
+        process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
+        10,
+      ),
+      refreshSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
     },
   };
 });

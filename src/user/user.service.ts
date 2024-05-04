@@ -1,12 +1,13 @@
 import { PrismaService } from './../prisma/prisma.service';
-import { UpdateUserDto } from './dto/user.dto';
-import { RegisterDto } from 'src/auth/dto/auth.dto';
 
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as generator from 'generate-password';
 
@@ -38,40 +39,73 @@ export class UserService {
     }
   }
 
-  async create(registerData: RegisterDto) {
-    const { email, password } = registerData;
+  async create(registerData: Prisma.UserCreateInput) {
+    const { email, password, userName } = registerData;
     const foundUser = await this.findByEmail(email);
 
     if (foundUser) {
       throw new ConflictException(`User ${email} already exists`);
     }
 
-    const hashPassword = await bcrypt.hash(password, process.env.JWT_SALT);
+    const hashPassword = await bcrypt.hash(password, 10);
 
     try {
       return await this.prisma.user.create({
-        data: { email, password: hashPassword, ...registerData },
+        data: { email, password: hashPassword, userName },
       });
     } catch (error) {
-      throw new ConflictException(error.detail);
+      if (error.code === 'P2002') {
+        throw new ConflictException('A user with this email already exists.');
+      } else if (error.code === 'P2003') {
+        throw new BadRequestException('Invalid foreign key.');
+      } else if (error.code === 'P1001') {
+        throw new InternalServerErrorException(
+          'Failed to connect to the database.',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Something went wrong: ' + error,
+        );
+      }
     }
   }
 
-  async update(updateData: UpdateUserDto) {
-    const { email } = updateData;
-    const user = await this.findByEmail(email);
+  async update(id: string, updateData: Prisma.UserUpdateInput) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id },
+    });
 
-    if (!user) {
-      throw new NotFoundException(`User ${email} not found`);
+    if (!existingUser) {
+      throw new NotFoundException(`User ${id} not found`);
     }
 
     try {
       return await this.prisma.user.update({
-        where: { email },
+        where: { id },
         data: updateData,
       });
     } catch (error) {
-      throw new ConflictException(error.detail);
+      // Unique constraint violation
+      if (error.code === 'P2002') {
+        throw new ConflictException(
+          `Duplicate field: ${error.meta.target.join(', ')}`,
+        );
+      }
+
+      // Invalid foreign key
+      if (error.code === 'P2003') {
+        throw new BadRequestException(
+          `Invalid foreign key: ${error.meta.target.join(', ')}`,
+        );
+      }
+
+      // Failed to connect to the database
+      if (error.code === 'P1001') {
+        throw new InternalServerErrorException(
+          'Failed to connect to the database.',
+        );
+      }
+      throw new InternalServerErrorException('Something went wrong.');
     }
   }
 
@@ -102,10 +136,7 @@ export class UserService {
       strict: true,
     });
 
-    const hashPassword = await bcrypt.hash(
-      generatedPassword,
-      process.env.JWT_SALT,
-    );
+    const hashPassword = await bcrypt.hash(generatedPassword, 10);
 
     user.password = hashPassword;
 

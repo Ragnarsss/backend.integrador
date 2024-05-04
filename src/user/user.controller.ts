@@ -1,16 +1,24 @@
-import { Payload } from '@nestjs/microservices/decorators';
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UserDto, UpdateUserDto, CreateUserDto } from './dto/user.dto';
-import { RegisterDto } from 'src/auth/dto/auth.dto';
+
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 
 @ApiTags('Users')
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
+  @Get('users')
   async findAll() {
     try {
       const foundUsers = await this.userService.findAll();
@@ -47,34 +55,50 @@ export class UserController {
   }
 
   @Post('create')
-  async create(@Body() payload: RegisterDto) {
+  async create(@Body() createData: Prisma.UserCreateInput) {
+    console.log('here we are out', createData);
+
     try {
-      const createdUser = await this.userService.create(payload);
+      console.log('here we are in');
+
+      const createdUser = await this.userService.create(createData);
       return {
         success: true,
         message: 'User created succesfully',
         data: createdUser,
       };
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to create user',
-        error: (error as Record<string, string>)?.message,
-      };
+      if (error.code === 'P1001') {
+        return {
+          success: false,
+          message: 'Failed to connect to the database',
+          error: (error as Record<string, string>)?.message,
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Failed to find users',
+          error: (error as Record<string, string>)?.message,
+        };
+      }
     }
   }
 
-  @Patch('/update')
-  async update(@Body() updateData: UpdateUserDto) {
+  @Patch('update/:id')
+  async update(
+    @Body() updateData: Prisma.UserUpdateInput,
+    @Param('id') id: string,
+  ) {
     try {
-      const updateUser = await this.userService.update(updateData);
-      console.log('user updated');
+      const updateUser = await this.userService.update(id, updateData);
       return {
         success: true,
         message: 'User updated succesfully',
         data: updateUser,
       };
     } catch (error) {
+      console.log('dafuq');
+
       return {
         success: false,
         message: 'Failed to update user',
@@ -83,8 +107,8 @@ export class UserController {
     }
   }
 
-  @Delete()
-  async delete(@Body() id: string) {
+  @Delete('delete/:id')
+  async delete(@Param('id') id: string) {
     try {
       const deletedUser = await this.userService.delete(id);
       return {
@@ -99,5 +123,17 @@ export class UserController {
         error: (error as Record<string, string>)?.message,
       };
     }
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(`User ${email} not found`);
+    }
+
+    return {
+      message: 'Password reset email sent',
+    };
   }
 }
