@@ -1,69 +1,75 @@
+import { PrismaService } from './../prisma/prisma.service';
+import { UpdateUserDto } from './dto/user.dto';
+import { RegisterDto } from 'src/auth/dto/auth.dto';
+
 import {
-  Injectable,
   ConflictException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as generator from 'generate-password';
-import { User } from './entities/user.entity';
-import { UpdateUserDto, UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.userRepo.find();
+    try {
+      return await this.prisma.user.findMany();
+    } catch (error) {
+      throw new ConflictException(error.detail);
+    }
   }
 
-  async findOne(id: number) {
-    const user = await this.userRepo.findOneBy({ id });
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User #${id} not found`);
     }
     return user;
   }
 
-  async findByUserName(userName: string) {
-    const user = await this.userRepo.findOneBy({ userName });
-    if (!user) {
-      throw new NotFoundException(`User ${userName} not found`);
-    }
-    return user;
-  }
-
   async findByEmail(email: string) {
-    const user = await this.userRepo.findOneBy({ email });
-
-    return user || null;
-  }
-
-  async create(payload: UserDto) {
-    const newUser = this.userRepo.create(payload);
-
-    const hashPassword = await bcrypt.hash(newUser.password, 10);
-
-    newUser.password = hashPassword;
-
     try {
-      const createdUser = await this.userRepo.save(newUser);
-      return { user: createdUser, password: newUser.password };
+      return await this.prisma.user.findUnique({ where: { email } });
     } catch (error) {
       throw new ConflictException(error.detail);
     }
   }
 
-  async update(email: string, payload: UpdateUserDto) {
+  async create(registerData: RegisterDto) {
+    const { email, password } = registerData;
+    const foundUser = await this.findByEmail(email);
+
+    if (foundUser) {
+      throw new ConflictException(`User ${email} already exists`);
+    }
+
+    const hashPassword = await bcrypt.hash(password, process.env.JWT_SALT);
+
+    try {
+      return await this.prisma.user.create({
+        data: { email, password: hashPassword, ...registerData },
+      });
+    } catch (error) {
+      throw new ConflictException(error.detail);
+    }
+  }
+
+  async update(updateData: UpdateUserDto) {
+    const { email } = updateData;
     const user = await this.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException(`User ${email} not found`);
     }
 
-    this.userRepo.merge(user, payload);
-
     try {
-      return await this.userRepo.save(user);
+      return await this.prisma.user.update({
+        where: { email },
+        data: updateData,
+      });
     } catch (error) {
       throw new ConflictException(error.detail);
     }
@@ -76,7 +82,7 @@ export class UserService {
       throw new NotFoundException(`User ${email} not found`);
     }
 
-    await this.userRepo.delete(user);
+    await this.prisma.user.delete({ where: { email } });
 
     return user;
   }
@@ -96,14 +102,23 @@ export class UserService {
       strict: true,
     });
 
-    const hashPassword = await bcrypt.hash(generatedPassword, 10);
+    const hashPassword = await bcrypt.hash(
+      generatedPassword,
+      process.env.JWT_SALT,
+    );
 
     user.password = hashPassword;
 
-    await this.userRepo.save(user).catch((error) => {
-      throw new ConflictException(error.detail);
-    });
-
-    return generatedPassword;
+    await this.prisma.user
+      .update({
+        where: { email },
+        data: user,
+      })
+      .then(() => {
+        return generatedPassword;
+      })
+      .catch((error) => {
+        throw new ConflictException(error.detail);
+      });
   }
 }
