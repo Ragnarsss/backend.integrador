@@ -14,68 +14,72 @@ datasource db {
 }
 
 model User {
-  id                String           @id @default(cuid())
-  email             String           
-  name              String?
+  id                String          @id @default(cuid())
+  email             String
+  userName          String?
   password          String
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  serviceProviderId String         @unique
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  serviceProviderId String          @unique
   serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
 }
 
 model ServiceProvider {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  address   String
+  lastName  String
   phone     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   User      User?
-  userId    String  @unique
+  userId    String    @unique
   services  Service[]
-  ProviderRating ProviderRating[]
+  bookings  Booking[]
 }
+
 model Service {
-  id        String   @id @default(cuid())
-  name      String
-  price     Float
-  description String
-  isActive  Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  serviceProviderId String @unique
+  id                String          @id @default(cuid())
+  name              String
+  price             Float
+  description       String
+  isActive          Boolean
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  serviceProviderId String          @unique
   serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
-  bookings Booking[]
-  ServiceRating ServiceRating[]
+  bookings          Booking[]
 }
 
 model Booking {
-  id        String   @id @default(cuid())
-  date      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  serviceId String @unique
-  service   Service  @relation(fields: [serviceId], references: [id])
-  isActive Boolean
+  id             String          @id @default(cuid())
+  date           DateTime
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  serviceId      String          @unique
+  isActive       Boolean
+  service        Service         @relation(fields: [serviceId], references: [id])
+  providerId     String          @unique
+  provider       ServiceProvider @relation(fields: [providerId], references: [id])
+  providerReview ProviderReview?
+  serviceReview  ServiceReview?
 }
 
-model ProviderRating {
+model ProviderReview {
   id        String   @id @default(cuid())
   rating    Int
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  serviceProviderId String @unique
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
 }
 
-model ServiceRating {
+model ServiceReview {
   id        String   @id @default(cuid())
   rating    Int
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  serviceId String @unique
-  service   Service @relation(fields: [serviceId], references: [id])
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id])
 }
