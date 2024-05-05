@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProfessionalResolver } from './service-provider.resolver';
-import { ProfessionalService } from './service-provider.service';
+import { ProfessionalResolver } from './professional.resolver';
+import { ProfessionalService } from './professional.service';
 
 describe('ProfessionalResolver', () => {
   let resolver: ProfessionalResolver;

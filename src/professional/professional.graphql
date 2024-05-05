@@ -1,20 +1,18 @@
 type Professional {
-  # Example field (placeholder)
-  exampleField: Int
+  id: ID!
+  name: String!
+  lastName: String!
+  phone: String!
+  createdAt: String!
+  updatedAt: String!
+  userId: String!
+  user: User
+  services: [Service!]!
+  bookings: [Booking!]!
 }
-
-input CreateProfessionalInput {
-  # Example field (placeholder)
-  exampleField: Int
-}
-
-input UpdateProfessionalInput {
-  id: Int!
-}
-
 type Query {
-  Professional: [Professional]!
-  Professional(id: Int!): Professional
+  professional: [Professional]!
+  professional(id: Int!): Professional
 }
 
 type Mutation {

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProfessionalService } from './service-provider.service';
+import { ProfessionalService } from './professional.service';
 
 describe('ProfessionalService', () => {
   let service: ProfessionalService;

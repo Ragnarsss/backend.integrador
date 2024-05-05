@@ -1,0 +1,9 @@
+type ServiceReview {
+  id: ID!
+  rating: Int
+  comment: String
+  createdAt: String!
+  updatedAt: String!
+  bookingId: String!
+  booking: Booking!
+}

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProfessionalService } from './service-provider.service';
-import { ProfessionalResolver } from './service-provider.resolver';
+import { ProfessionalService } from './professional.service';
+import { ProfessionalResolver } from './professional.resolver';
 
 @Module({
   providers: [ProfessionalResolver, ProfessionalService],
