@@ -6,13 +6,13 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "serviceProviderId" TEXT,
+    "ProfessionalId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ServiceProvider" (
+CREATE TABLE "Professional" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE "ServiceProvider" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
 
-    CONSTRAINT "ServiceProvider_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Professional_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -33,7 +33,7 @@ CREATE TABLE "Service" (
     "isActive" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "serviceProviderId" TEXT NOT NULL,
+    "ProfessionalId" TEXT NOT NULL,
 
     CONSTRAINT "Service_pkey" PRIMARY KEY ("id")
 );
@@ -79,13 +79,13 @@ CREATE TABLE "ServiceReview" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_serviceProviderId_key" ON "User"("serviceProviderId");
+CREATE UNIQUE INDEX "User_ProfessionalId_key" ON "User"("ProfessionalId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ServiceProvider_userId_key" ON "ServiceProvider"("userId");
+CREATE UNIQUE INDEX "Professional_userId_key" ON "Professional"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Service_serviceProviderId_key" ON "Service"("serviceProviderId");
+CREATE UNIQUE INDEX "Service_ProfessionalId_key" ON "Service"("ProfessionalId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Booking_serviceId_key" ON "Booking"("serviceId");
@@ -100,16 +100,16 @@ CREATE UNIQUE INDEX "ProviderReview_bookingId_key" ON "ProviderReview"("bookingI
 CREATE UNIQUE INDEX "ServiceReview_bookingId_key" ON "ServiceReview"("bookingId");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_serviceProviderId_fkey" FOREIGN KEY ("serviceProviderId") REFERENCES "ServiceProvider"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_ProfessionalId_fkey" FOREIGN KEY ("ProfessionalId") REFERENCES "Professional"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Service" ADD CONSTRAINT "Service_serviceProviderId_fkey" FOREIGN KEY ("serviceProviderId") REFERENCES "ServiceProvider"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Service" ADD CONSTRAINT "Service_ProfessionalId_fkey" FOREIGN KEY ("ProfessionalId") REFERENCES "Professional"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Booking" ADD CONSTRAINT "Booking_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "Service"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Booking" ADD CONSTRAINT "Booking_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "ServiceProvider"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Booking" ADD CONSTRAINT "Booking_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "Professional"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProviderReview" ADD CONSTRAINT "ProviderReview_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "Booking"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,17 +1,21 @@
-import { Module } from '@nestjs/common';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ServiceModule } from './service/service.module';
+import { BookingModule } from './booking/booking.module';
+import { ProfessionalModule } from './professional/professional.module';
 
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import config from './config';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { GraphqlModule } from './graphql/graphql.module';
-import { ServiceModule } from './service/service.module';
-import { ServiceProviderModule } from './service-provider/service-provider.module';
-import { BookingModule } from './booking/booking.module';
-
+import { GraphQLModule } from '@nestjs/graphql';
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      typePaths: ['./**/*.graphql'],
+    }),
     ConfigModule.forRoot({
       envFilePath: '.env',
       load: [config],
@@ -28,9 +32,8 @@ import { BookingModule } from './booking/booking.module';
     }),
     UserModule,
     AuthModule,
-    GraphqlModule,
     ServiceModule,
-    ServiceProviderModule,
+    ProfessionalModule,
     BookingModule,
   ],
 })

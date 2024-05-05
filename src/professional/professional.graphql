@@ -1,0 +1,26 @@
+type Professional {
+  id: ID!
+  name: String!
+  lastName: String!
+  phone: String!
+  createdAt: String!
+  updatedAt: String!
+  userId: String!
+  user: User
+  services: [Service!]!
+  bookings: [Booking!]!
+}
+type Query {
+  professional: [Professional]!
+  professional(id: Int!): Professional
+}
+
+type Mutation {
+  createProfessional(
+    createProfessionalInput: CreateProfessionalInput!
+  ): Professional!
+  updateProfessional(
+    updateProfessionalInput: UpdateProfessionalInput!
+  ): Professional!
+  removeProfessional(id: Int!): Professional
+}

@@ -21,14 +21,14 @@ export class User {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  serviceProviderId: string;
+  ProfessionalId: string;
 
-  @Field(() => ServiceProvider, { nullable: true })
-  serviceProvider: ServiceProvider;
+  @Field(() => Professional, { nullable: true })
+  Professional: Professional;
 }
 
 @ObjectType()
-export class ServiceProvider {
+export class Professional {
   @Field()
   id: string;
 
@@ -77,9 +77,9 @@ export class Service {
   @Field()
   updatedAt: Date;
 
-  @Field(() => ServiceProvider, { nullable: true })
-  serviceProvider: ServiceProvider;
+  @Field(() => Professional, { nullable: true })
+  Professional: Professional;
 
   @Field()
-  serviceProviderId: string;
+  ProfessionalId: string;
 }

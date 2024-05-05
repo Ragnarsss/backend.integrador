@@ -1,15 +1,16 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { BookingService } from './booking.service';
-import { Booking } from './entities/booking.entity';
-import { CreateBookingInput } from './dto/create-booking.input';
-import { UpdateBookingInput } from './dto/update-booking.input';
+import { Booking } from './booking.graph';
+import { Prisma } from '@prisma/client';
 
 @Resolver(() => Booking)
 export class BookingResolver {
   constructor(private readonly bookingService: BookingService) {}
 
   @Mutation(() => Booking)
-  createBooking(@Args('createBookingInput') createBookingInput: CreateBookingInput) {
+  createBooking(
+    @Args('createBookingInput') createBookingInput: Prisma.BookingCreateInput,
+  ) {
     return this.bookingService.create(createBookingInput);
   }
 
@@ -24,8 +25,13 @@ export class BookingResolver {
   }
 
   @Mutation(() => Booking)
-  updateBooking(@Args('updateBookingInput') updateBookingInput: UpdateBookingInput) {
-    return this.bookingService.update(updateBookingInput.id, updateBookingInput);
+  updateBooking(
+    @Args('updateBookingInput') updateBookingInput: Prisma.BookingUpdateInput,
+  ) {
+    return this.bookingService.update(
+      updateBookingInput.id,
+      updateBookingInput,
+    );
   }
 
   @Mutation(() => Booking)
