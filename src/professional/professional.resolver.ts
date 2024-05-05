@@ -30,7 +30,7 @@ export class ProfessionalResolver {
     updateProfessionalInput: Prisma.ProfessionalUpdateInput,
   ) {
     return this.professionalService.update(
-      updateProfessionalInput.id,
+      updateProfessionalInput.id as string,
       updateProfessionalInput,
     );
   }

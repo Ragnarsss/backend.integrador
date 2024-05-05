@@ -15,17 +15,13 @@ import { GraphQLModule } from '@nestjs/graphql';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       typePaths: ['./**/*.graphql'],
+      playground: true,
     }),
     ConfigModule.forRoot({
       envFilePath: '.env',
       load: [config],
       isGlobal: true,
       validationSchema: Joi.object({
-        POSTGRES_DB: Joi.string().required(),
-        POSTGRES_USER: Joi.string().required(),
-        POSTGRES_PASSWORD: Joi.string().required(),
-        POSTGRES_PORT: Joi.number().required(),
-        POSTGRES_HOST: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
       }),

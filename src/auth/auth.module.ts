@@ -16,10 +16,11 @@ const config = new ConfigService();
         secret: config.get('JWT_SECRET'),
         signOptions: { expiresIn: config.get('JWT_EXPIRATION_TIME') },
       }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, ConfigService],
+  providers: [AuthService, UserService],
   exports: [AuthService],
 })
 export class AuthModule {}

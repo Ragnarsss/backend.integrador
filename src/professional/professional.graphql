@@ -11,7 +11,7 @@ type Professional {
   bookings: [Booking!]!
 }
 type Query {
-  professional: [Professional]!
+  professionals: [Professional!]!
   professional(id: Int!): Professional
 }
 

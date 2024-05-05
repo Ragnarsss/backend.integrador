@@ -1,13 +1,22 @@
-model Booking {
-  id                 String              @id @default(cuid())
-  date               DateTime
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  serviceId          String              @unique
-  isActive           Boolean
-  service            Service             @relation(fields: [serviceId], references: [id])
-  professionalId     String              @unique
-  professional       Professional        @relation(fields: [professionalId], references: [id])
-  professionalReview ProfessionalReview?
-  serviceReview      ServiceReview?
+type Booking {
+  id: ID!
+  date: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isActive: Boolean
+  service: Service!
+  professional: Professional!
+  professionalReview: ProfessionalReview
+  serviceReview: ServiceReview
+}
+
+type Query {
+  booking(id: ID!): Booking
+  bookings: [Booking!]!
+}
+
+type Mutation {
+  createBooking(input: CreateBookingInput!): Booking!
+  updateBooking(id: ID!, input: UpdateBookingInput!): Booking!
+  deleteBooking(id: ID!): Booking!
 }

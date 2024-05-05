@@ -1,34 +1,38 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ServiceService } from './service.service';
-import { CreateServiceInput } from './dto/create-service.input';
-import { UpdateServiceInput } from './dto/update-service.input';
+import { CreateServiceInput, UpdateServiceInput } from './dto/service.dto';
 
-@Resolver('Service')
+@Resolver()
 export class ServiceResolver {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Mutation('createService')
-  create(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
+  async createService(
+    @Args('createServiceInput') createServiceInput: CreateServiceInput,
+  ) {
     return this.serviceService.create(createServiceInput);
   }
 
-  @Query('service')
-  findAll() {
+  @Query('services')
+  async getServices() {
     return this.serviceService.findAll();
   }
 
   @Query('service')
-  findOne(@Args('id') id: number) {
+  async getServiceById(@Args('id') id: string) {
     return this.serviceService.findOne(id);
   }
 
   @Mutation('updateService')
-  update(@Args('updateServiceInput') updateServiceInput: UpdateServiceInput) {
-    return this.serviceService.update(updateServiceInput.id, updateServiceInput);
+  async updateService(
+    @Args('id') id: string,
+    @Args('updateServiceInput') updateServiceInput: UpdateServiceInput,
+  ) {
+    return this.serviceService.update(id, updateServiceInput);
   }
 
   @Mutation('removeService')
-  remove(@Args('id') id: number) {
+  async removeService(@Args('id') id: string) {
     return this.serviceService.remove(id);
   }
 }

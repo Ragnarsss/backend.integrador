@@ -1,26 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { CreateServiceInput } from './dto/create-service.input';
-import { UpdateServiceInput } from './dto/update-service.input';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateServiceInput, UpdateServiceInput } from './dto/service.dto';
 
 @Injectable()
 export class ServiceService {
-  create(createServiceInput: CreateServiceInput) {
-    return 'This action adds a new service';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createServiceInput: CreateServiceInput) {
+    return this.prisma.service.create({ data: createServiceInput });
   }
 
-  findAll() {
-    return `This action returns all service`;
+  async findAll() {
+    return this.prisma.service.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} service`;
+  async findOne(id: string) {
+    const service = await this.prisma.service.findUnique({ where: { id } });
+    if (!service) {
+      throw new NotFoundException(`Service with ID ${id} not found`);
+    }
+    return service;
   }
 
-  update(id: number, updateServiceInput: UpdateServiceInput) {
-    return `This action updates a #${id} service`;
+  async update(id: string, updateServiceInput: UpdateServiceInput) {
+    const { name, price, description, isActive } = updateServiceInput;
+    return this.prisma.service.update({
+      where: { id },
+      data: { name, price, description, isActive },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async remove(id: string) {
+    return this.prisma.service.delete({ where: { id } });
   }
 }

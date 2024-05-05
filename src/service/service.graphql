@@ -1,24 +1,47 @@
 type Service {
-  # Example field (placeholder)
-  exampleField: Int
+  id: ID!
+  name: String!
+  price: Float!
+  description: String!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  professionalId: ID!
+  professional: Professional!
+  bookings: [Booking!]!
+}
+
+type Professional {
+  id: ID!
+  # Otros campos del profesional, si los tienes
+}
+
+type Booking {
+  # Definir la estructura de un booking, si es necesario
 }
 
 input CreateServiceInput {
-  # Example field (placeholder)
-  exampleField: Int
+  name: String!
+  price: Float!
+  description: String!
+  isActive: Boolean!
+  professionalId: ID!
 }
 
 input UpdateServiceInput {
-  id: Int!
+  name: String
+  price: Float
+  description: String
+  isActive: Boolean
 }
 
 type Query {
-  service: [Service]!
-  service(id: Int!): Service
+  services: [Service!]!
+  service(id: ID!): Service!
 }
 
 type Mutation {
   createService(createServiceInput: CreateServiceInput!): Service!
-  updateService(updateServiceInput: UpdateServiceInput!): Service!
-  removeService(id: Int!): Service
+  updateService(id: ID!, updateServiceInput: UpdateServiceInput!): Service!
+  removeService(id: ID!): Service!
 }

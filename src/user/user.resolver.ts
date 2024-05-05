@@ -1,26 +1,36 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from './user.graphql';
+import { Prisma } from '@prisma/client';
 
-@Resolver(() => User)
+@Resolver('User')
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @Query(() => [User], { name: 'users' })
+  @Query()
+  async user(@Args('id') id: string) {
+    return this.userService.findOne(id);
+  }
+
+  @Query()
   async users() {
-    try {
-      const foundUsers = await this.userService.findAll();
-      return {
-        success: true,
-        message: 'Users found',
-        data: foundUsers,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to found users',
-        error: (error as Record<string, string>)?.message,
-      };
-    }
+    return this.userService.findAll();
+  }
+
+  @Mutation()
+  async createUser(@Args('input') input: Prisma.UserCreateInput) {
+    return this.userService.create(input);
+  }
+
+  @Mutation()
+  async updateUser(
+    @Args('id') id: string,
+    @Args('input') input: Prisma.UserUpdateInput,
+  ) {
+    return this.userService.update(id, input);
+  }
+
+  @Mutation()
+  async deleteUser(@Args('id') id: string) {
+    return this.userService.delete(id);
   }
 }
